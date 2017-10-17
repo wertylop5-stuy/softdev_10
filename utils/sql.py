@@ -30,7 +30,7 @@ def create_value_string(list):
 	
 	values = "("
 	for value in list:
-		values += '"' + value + '"'
+		values += '"' + str(value) + '"'
 		values += ", "
 	
 	if len(values) > 1:	
@@ -59,18 +59,41 @@ def sql_select(fields, tables, condition):
 	'''
 	res = "SELECT "
 	
-	for field in zip(*[iter(fields)]):
+	for field in fields:
 		res += "%s, "%(field)
 	res = res[:len(res)-2]
 	
 	res += " FROM "
-	for table in zip(*[iter(tables)]):
+	for table in tables:
 		res += "%s, "%(table)
 	res = res[:len(res)-2]
 	
 	if condition != "":
 		res += " WHERE %s"%(condition)
 	
+	return res + ";"
+
+def sql_update(table_name, field, new_value, condition):
+	'''
+	table_name: string
+	field: string
+	new_value: string or int or float
+	condition: string
+	
+	Returns a string representing the SQL UPDATE operation
+	'''
+	
+	res = "UPDATE %s SET %s="%(table_name, field)
+	
+	if type(new_value) == type("str"):
+		res += '"%s"'%(new_value)
+	elif type(new_value) == type(4):
+		res += '%d'%(new_value)
+	elif type(new_value) == type(0.3):
+		res += '%f'%(new_value)
+	
+	if condition:
+		res += " WHERE %s"%(condition)
 	return res + ";"
 
 def formatted_select(c, fields, tables, condition):
@@ -88,7 +111,8 @@ def formatted_select(c, fields, tables, condition):
 		for v in zip(fields, val):
 			temp[v[0]] = v[1]
 		res.append(temp)
-	print res
+	
+	return res
 
 def populate_table(csv_file, table_name, cursor):
 	'''
