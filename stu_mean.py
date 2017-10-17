@@ -32,13 +32,22 @@ def get_average(c, student_name):
 	avg /= len(courses.keys())
 	print avg
 
-
+'''
 val = c.execute("SELECT peeps.id, mark FROM peeps, courses WHERE peeps.id = courses.id;")
 for row in val:
 	print row
 
 get_grades(c, "bassnectar")
 get_average(c, "bassnectar")
+'''
+
+vals = c.execute(sql_select(["code", "mark", "id"], ["courses"], ""))
+print vals
+for v in vals:
+	print v
+
+vals = formatted_select(c, ["code", "mark", "id"], ["courses"], "")
+print vals
 
 db.commit()
 db.close()

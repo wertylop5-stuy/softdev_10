@@ -49,6 +49,47 @@ def sql_insert_into(table_name, fields, record):
 	return "INSERT INTO " + table_name + " " + fields + \
 		" VALUES " + record + ";"
 
+def sql_select(fields, tables, condition):
+	'''
+	fields: list of strings
+	tables: list of strings
+	condition: a string containing all desired conditions
+	
+	Returns a SQL SELECT operation in the form of a string
+	'''
+	res = "SELECT "
+	
+	for field in zip(*[iter(fields)]):
+		res += "%s, "%(field)
+	res = res[:len(res)-2]
+	
+	res += " FROM "
+	for table in zip(*[iter(tables)]):
+		res += "%s, "%(table)
+	res = res[:len(res)-2]
+	
+	if condition != "":
+		res += " WHERE %s"%(condition)
+	
+	return res + ";"
+
+def formatted_select(c, fields, tables, condition):
+	'''
+	Args: see sql_select
+	
+	Returns a list of dictionaries containing the results of the SQL
+	SELECT operation
+	'''
+	
+	values = c.execute(sql_select(fields, tables, condition))
+	res = []
+	for val in values:
+		temp = {}
+		for v in zip(fields, val):
+			temp[v[0]] = v[1]
+		res.append(temp)
+	print res
+
 def populate_table(csv_file, table_name, cursor):
 	'''
 	Uses the provided cursor to a database and populates the 
