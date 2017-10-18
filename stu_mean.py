@@ -32,7 +32,20 @@ def get_average(c, student_name):
 	return avg
 
 def update_average(c, student_name):
-	avg = get_average(c, student_name)
+	val = c.execute("SELECT id FROM peeps WHERE name='%s'"%(student_name))
+	
+	id = -1
+	for v in val:
+		id = v
+	
+	courses = c.execute("SELECT code, mark FROM courses WHERE id=%d;"%(id))
+	avg = -1
+	length = 0
+	for course in courses:
+		avg += course[1]
+		length += 1
+	
+	avg /= length 
 	
 	temp = formatted_select(c, ["id"], ["peeps"], "name='%s'"%(student_name))
 	
